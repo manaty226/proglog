@@ -1,5 +1,22 @@
-.PHONY: help test compile
+CONFIG_PATH=.cert
+.PHONY: help test compile gencert
 .DEFAULT_GOAL := help
+
+init:
+	mkdir -p ${CONFIG_PATH}
+
+gencert:
+	${HOME}/go/bin/cfssl gencert \
+		-initca testutil/ca-csr.json | ${HOME}/go/bin/cfssljson -bare ca
+	
+	${HOME}/go/bin/cfssl gencert \
+		-ca=ca.pem \
+		-ca-key=ca-key.pem \
+		-config=testutil/ca-config.json \
+		-profile=server \
+		testutil/server-csr.json | ${HOME}/go/bin/cfssljson -bare server
+	
+	mv *.pem *.csr ${CONFIG_PATH}
 
 test:
 	go test -race -shuffle=on ./...
