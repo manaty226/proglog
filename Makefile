@@ -16,6 +16,13 @@ gencert:
 		-profile=server \
 		testutil/server-csr.json | ${HOME}/go/bin/cfssljson -bare server
 	
+	${HOME}/go/bin/cfssl gencert \
+		-ca=ca.pem \
+		-ca-key=ca-key.pem \
+		-config=testutil/ca-config.json \
+		-profile=client \
+		testutil/client-csr.json | ${HOME}/go/bin/cfssljson -bare client
+	
 	mv *.pem *.csr ${CONFIG_PATH}
 
 test:
