@@ -21,11 +21,26 @@ gencert:
 		-ca-key=ca-key.pem \
 		-config=testutil/ca-config.json \
 		-profile=client \
-		testutil/client-csr.json | ${HOME}/go/bin/cfssljson -bare client
-	
+		-cn="root" \
+		testutil/client-csr.json | ${HOME}/go/bin/cfssljson -bare root-client
+
+	${HOME}/go/bin/cfssl gencert \
+		-ca=ca.pem \
+		-ca-key=ca-key.pem \
+		-config=testutil/ca-config.json \
+		-profile=client \
+		-cn="nobody" \
+		testutil/client-csr.json | ${HOME}/go/bin/cfssljson -bare nobody-client
+
 	mv *.pem *.csr ${CONFIG_PATH}
 
-test:
+${CONFIG_DIR}/model.conf:
+	cp testutil/model.conf ${CONFIG_DIR}/model.conf
+
+${CONFIG_DIR}/policy.csv:
+	cp testutil/policy.csv ${CONFIG_DIR}/policy.csv
+
+test: $(CONFIG_DIR)/policy.csv $(CONFIG_DIR)/model.conf
 	go test -race -shuffle=on ./...
 
 compile:
