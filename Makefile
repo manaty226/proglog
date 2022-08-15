@@ -1,9 +1,9 @@
-CONFIG_PATH=.cert
+CONFIG_PATH=.proglog
 .PHONY: help test compile gencert
 .DEFAULT_GOAL := help
 
 init:
-	mkdir -p ${CONFIG_PATH}
+	mkdir -p ${CONFIG_DIR}
 
 gencert:
 	${HOME}/go/bin/cfssl gencert \
@@ -32,7 +32,7 @@ gencert:
 		-cn="nobody" \
 		testutil/client-csr.json | ${HOME}/go/bin/cfssljson -bare nobody-client
 
-	mv *.pem *.csr ${CONFIG_PATH}
+	mv *.pem *.csr ${CONFIG_DIR}
 
 ${CONFIG_DIR}/model.conf:
 	cp testutil/model.conf ${CONFIG_DIR}/model.conf
