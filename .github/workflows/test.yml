@@ -17,7 +17,7 @@ jobs:
     - run: |
         go install github.com/cloudflare/cfssl/cmd/cfssl@v1.6.1
         go install github.com/cloudflare/cfssl/cmd/cfssljson@v1.6.1
-        cfssl gencert -initca testutil/ca-csr.json | cfssljson -bare ca
+        cfssl gencert -initca testutil/ca-csr.json
       env:
         CONFIG_DIR: .proglog/
     - name: report coverage

@@ -5,8 +5,6 @@ init:
 	mkdir -p ${CONFIG_DIR}
 
 gencert:
-	cat testutil/ca-csr.json
-	ls -l
 	${HOME}/go/bin/cfssl gencert \
 		-initca testutil/ca-csr.json | ${HOME}/go/bin/cfssljson -bare ca
 	
