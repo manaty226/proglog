@@ -1,4 +1,3 @@
-CONFIG_PATH=.proglog
 .PHONY: help test compile gencert
 .DEFAULT_GOAL := help
 
@@ -27,7 +26,7 @@ gencert:
 	${HOME}/go/bin/cfssl gencert \
 		-ca=ca.pem \
 		-ca-key=ca-key.pem \
-		-config=testutil/ca-config.json \
+		-config=./testutil/ca-config.json \
 		-profile=client \
 		-cn="nobody" \
 		testutil/client-csr.json | ${HOME}/go/bin/cfssljson -bare nobody-client
