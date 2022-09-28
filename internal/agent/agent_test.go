@@ -11,11 +11,11 @@ import (
 	api "github.com/manaty226/proglog/api/v1"
 	"github.com/manaty226/proglog/internal/agent"
 	"github.com/manaty226/proglog/internal/config"
+	"github.com/manaty226/proglog/internal/loadbalance"
 	"github.com/stretchr/testify/require"
 	"github.com/travisjeffery/go-dynaport"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/status"
 )
 
 func TestAgent(t *testing.T) {
@@ -90,19 +90,17 @@ func TestAgent(t *testing.T) {
 		},
 	)
 	require.NoError(t, err)
+
+	time.Sleep(3 * time.Second)
+
 	consumeResponse, err := leaderClient.Consume(
 		context.Background(),
 		&api.ConsumeRequest{
-			Offset: produceResponse.Offset + 1,
+			Offset: produceResponse.Offset,
 		},
 	)
-	require.Nil(t, consumeResponse)
-	require.Error(t, err)
-	got := status.Code(err)
-	want := status.Code(api.ErrOffsetOutOfRange{}.GRPCStatus().Err())
-	require.Equal(t, got, want)
-
-	time.Sleep(3 * time.Second)
+	require.NoError(t, err)
+	require.Equal(t, consumeResponse.Record.Value, []byte("foo"))
 
 	followerClient := client(t, agents[1], peerTLSConfig)
 	consumeResponse, err = followerClient.Consume(
@@ -125,7 +123,13 @@ func client(
 	rpcAddr, err := agent.Config.RPCAddr()
 	require.NoError(t, err)
 
-	conn, err := grpc.Dial(rpcAddr, opts...)
+	conn, err := grpc.Dial(
+		fmt.Sprintf(
+			"%s:///%s",
+			loadbalance.Name,
+			rpcAddr,
+		),
+		opts...)
 	require.NoError(t, err)
 
 	client := api.NewLogClient(conn)
