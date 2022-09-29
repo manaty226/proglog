@@ -1,24 +1,24 @@
-on:
-  push:
-    branches:
-      - "main"
+# on:
+#   push:
+#     branches:
+#       - "main"
 
-  pull_request:
+#   pull_request:
 
-name: test
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/setup-go@v3
-      with:
-        go-version: '>=1.18'
-    - uses: actions/checkout@v3
-    - run: |
-        go install github.com/cloudflare/cfssl/cmd/cfssl@v1.6.1
-        go install github.com/cloudflare/cfssl/cmd/cfssljson@v1.6.1
-        cfssl gencert -initca testutil/ca-csr.json
-      env:
-        CONFIG_DIR: .proglog/
-    - name: report coverage
-      uses: k1LoW/octocov-action@v0
+# name: test
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/setup-go@v3
+#       with:
+#         go-version: '>=1.18'
+#     - uses: actions/checkout@v3
+#     - run: |
+#         go install github.com/cloudflare/cfssl/cmd/cfssl@v1.6.1
+#         go install github.com/cloudflare/cfssl/cmd/cfssljson@v1.6.1
+#         cfssl gencert -initca testutil/ca-csr.json
+#       env:
+#         CONFIG_DIR: .proglog/
+#     - name: report coverage
+#       uses: k1LoW/octocov-action@v0
