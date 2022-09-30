@@ -19,7 +19,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("test \n")
 	client := api.NewLogClient(conn)
 	ctx := context.Background()
 	res, err := client.GetServers(ctx, &api.GetServersRequest{})
